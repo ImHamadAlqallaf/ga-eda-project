@@ -48,7 +48,7 @@ Disabled ratings or comments are not the same as zero engagement. The correspond
 
 - The CSV has no reported null or blank cells, but 1,799 `video_id` values contain `#NAME?`. Exclude these from video-level comparisons.
 - Repeated records exist. The `index` column is a row identifier and should not be used as an analysis variable.
-- The data file is not stored in this repository. In the current workspace, `youtube.csv` is one directory above this project folder.
+- The dataset is stored at `data/youtube.csv`.
 
 ## Objectives
 
