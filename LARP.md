@@ -68,10 +68,25 @@ A quick, plain-English cheat sheet so you can understand and present the whole p
 
 ---
 
-## 3. Files in This Branch (`IDE`)
+## 3. Presentation Cheat Sheet (`youtube_trending_eda.pptx`)
+
+A 10-slide PowerPoint is saved in the repo as `youtube_trending_eda.pptx` (using our `charts/` PNGs):
+
+- **Slide 1 (Title):** Project title, Ali AlRashedi & Hamad Alqallaf.
+- **Slide 2 (Problem Statement):** Unclear relationship between `views` and `likes`/`comments` across 161,470 trending records; messy `#NAME?` IDs and repeated daily rows.
+- **Slide 3 (Objectives):** Check quality -> Clean to 63,801 first-day records -> Measure relationships -> Summarise & recommend.
+- **Slide 4 & 5 (Finding 1):** Likes follow views (`0.71`) more closely than comments (`0.53`). Median is `2.75` likes and `0.38` comments per 100 views. Explain correlation ≠ causation.
+- **Slide 6 & 7 (Finding 2):** `90.5%` of trending videos start under 1M views (median `124,496` vs average `436,533`). Say why we use medians and split by country.
+- **Slide 8 & 9 (Finding 3):** `76.9%` (`49,047` videos) trend 1 day after publishing (`93.1%` within 2 days). Mention missing dates (`Jan 10–11`, `Apr 8–13`) mean no "best publish day".
+- **Slide 10 (Conclusion & Recommendations):** Use likes per 100 views (~1–6), track days 1–2, report medians, and analyse countries separately.
+
+---
+
+## 4. Files in This Branch (`ali`)
 
 - `README.md` — Project overview, problem statement, objectives, findings, recommendations, and To-Do list.
 - `youtube_trending_analysis.ipynb` — Full executed notebook (all 107 cells, zero errors).
-- `charts/` — 6 saved PNG charts ready to drop into PowerPoint.
+- `youtube_trending_eda.pptx` — 10-slide PowerPoint presentation.
+- `charts/` — 6 saved PNG charts ready for slides.
 - `data/youtube.csv` — Original dataset (untouched).
 - `LARP.md` — This guide.
