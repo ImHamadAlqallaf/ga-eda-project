@@ -1,82 +1,66 @@
 # YouTube Trending Videos: Views and Engagement
 
-An exploratory data analysis (EDA) of YouTube trending videos, built with **Pandas**, **Matplotlib**, and **Seaborn** in a Jupyter Notebook. It looks at how views relate to likes and comments for videos that reached the trending lists in four countries.
+An exploratory data analysis (EDA) of YouTube trending videos, built with **Pandas**, **Matplotlib**, and **Seaborn** in a Jupyter Notebook. It explores **161,470 YouTube trending records** from the **US, Canada, France, and GB**, collected between **November 14, 2017 and June 14, 2018**, and looks at how **views** relate to **likes**, **comments**, and **publish dates**.
 
-## Project Overview
-
-The dataset has 161,470 trending records from the US, Canada, France, and GB, recorded between November 14, 2017 and June 14, 2018. The notebook checks the data quality, cleans it, and compares views with likes, comments, and publish dates using simple statistics and charts.
-
-The results describe patterns in this dataset. They do not prove what causes a video to trend, and they do not represent every video on YouTube.
+The results describe patterns in this dataset only. They do not prove what makes a video trend, and they do not represent all YouTube videos.
 
 ## Problem Statement
 
 From November 14, 2017 to June 14, 2018, 161,470 YouTube trending records across four countries show view counts from 223 to about 424.5 million. The relationship between views and likes or comments is unclear, making it difficult to describe engagement among videos that reached the trending lists.
 
-## Objectives
+## Notebook Outline
 
-1. Describe the dataset and check its data quality.
-2. Prepare a consistent analysis table with valid video-country observations.
-3. Measure how views relate to likes and comments.
-4. Summarize the findings and limitations, then suggest cautious follow-up questions.
-
-### How the objectives answer the problem statement
-
-| Problem | Objective that addresses it |
-| --- | --- |
-| Invalid IDs and repeated daily records can distort the numbers | 1 and 2: find and remove `#NAME?` IDs and duplicates, keep one record per video and country |
-| The relationship between views and likes or comments is unclear | 3: correlation heatmap, views distribution, and likes/comments per 100 views |
-| Engagement among trending videos is hard to describe | 4: plain-language findings, limitations, and recommendations |
-
-### SMART criteria
-
-- **Specific:** Views and their relationship with likes and comments in the four-country dataset.
-- **Measurable:** The direction and strength of each relationship using correlation and engagement rates.
-- **Achievable:** The dataset contains all three measures. Repeated records, invalid IDs, and disabled comments or ratings are handled.
-- **Relevant:** The results describe engagement among videos on these trending lists.
-- **Time-bound:** Data from November 14, 2017 to June 14, 2018. Analysis completed by the course submission date.
-
-### Scope
-
-- **In scope:** `views` as the dependent variable, compared with `likes`, `comment_count`, and publish timing. One first-recorded observation per valid video-country pair. Results described as relationships, not causes.
-- **Out of scope:** What causes a video to trend, results for all YouTube videos, and modelling category, tags, or publishing time as predictors.
+1. **Part 1: Import libraries** — Load Pandas, Matplotlib, Seaborn, and Missingno.
+2. **Part 2: View the data** — Load `data/youtube.csv`, inspect dimensions, column types, and initial summary statistics.
+3. **Part 3: Check data quality** — Check for missing values, duplicate rows, broken `#NAME?` video IDs, and disabled comments/ratings or error flags.
+4. **Part 4: Clean the data** — Build `newyoutube_df`, remove duplicates and `#NAME?` IDs, parse dates, and keep only the first trending record per video and country (`63,801` records).
+5. **Part 5: Views, likes, and comments** — Filter out disabled ratings/comments (`62,155` records), inspect the views distribution, plot a correlation heatmap, calculate engagement rates per 100 views, and compare countries.
+6. **Part 6: Publish dates** — Measure days from publishing to first trending day, track daily publishing volume and median views over time, and check whether busy publish days perform differently.
+7. **Part 7: Summary and recommendations** — Summarize findings, share practical recommendations, and document dataset limitations.
 
 ## Dataset
 
 - **File:** `data/youtube.csv` (about 83 MB)
-- **Size:** 161,470 rows and 18 columns
+- **Raw size:** 161,470 rows and 18 columns
 - **Countries:** US, Canada, France, GB
 - **Period:** November 14, 2017 to June 14, 2018
-- **Main columns used:** `video_id`, `trending_date`, `publish_date`, `publish_country`, `views`, `likes`, `dislikes`, `comment_count`, `comments_disabled`, `ratings_disabled`
+- **Main columns used:** `video_id`, `trending_date`, `publish_date`, `publish_country`, `views`, `likes`, `dislikes`, `comment_count`, `comments_disabled`, `ratings_disabled`, `video_error_or_removed`
 
-Data quality notes:
+Data quality and cleaning notes:
 
-- No null or blank cells.
-- 1,799 rows have `#NAME?` instead of a video ID. These are removed.
-- 219 rows are exact duplicates (ignoring the `index` column). These are removed.
-- A video appears once for every day it trends, so only its first trending record per country is kept. This leaves 63,801 records.
-- Comments are disabled in 2,788 rows and ratings in 1,424 rows. These are left out of the engagement comparison, because disabled is not the same as zero.
-- Trending data is missing for January 10 to 11 and April 8 to 13, 2018 (205 trending dates out of 213 days).
+- **No missing values:** 0% missing across all 18 columns.
+- **Broken IDs and duplicates:** 1,799 rows (1.11%) have `#NAME?` instead of a real `video_id`, and 219 rows (0.14%) are exact duplicates (ignoring `index`). Removing both drops 2,016 rows (1.25%, as 2 rows overlap), leaving 159,454 rows.
+- **First trending day per video and country:** A video appears once for every day it trends, so keeping only its first trending record per `(video_id, publish_country)` pair leaves **63,801** records.
+- **Disabled engagement flags:** Comments are disabled in 2,788 rows (1.73%) and ratings in 1,424 rows (0.88%). These rows are kept for views, but excluded from the likes/comments comparison (`engagement_df`, **62,155** rows) because disabled is not the same as zero engagement. Another 141 rows (0.09%) flagged as error/removed still have counts, so they are kept.
+- **Date gaps:** Trending data covers 205 unique dates out of 213 days (missing January 10–11 and April 8–13, 2018).
 
-> The original source of the CSV is not documented in this repository yet. See *Remaining Tasks*.
+> The original source of `data/youtube.csv` is not documented in this repository yet. See *Remaining Tasks*.
 
 ## Main Findings
 
-1. **Views and likes** have a fairly strong positive relationship (`0.71` correlation). Videos with more views usually have more likes.
-2. **Views and comments** have a weaker relationship (`0.53` correlation). Likes and comments are strongly related to each other (`0.82`).
-3. **Typical engagement** is about `2.75` likes and `0.38` comments per 100 views (median).
-4. **Views are uneven:** the median video had about 124,500 views on its first trending day, and about 91% of videos had under 1 million views, while a few reached tens of millions.
-5. **Timing:** about 77% of videos (49,047 of 63,801) first appeared on the trending list 1 day after publishing. Median views rose from around 100,000 to around 200,000 between March and June 2018.
-6. **Busy publish days:** there is no clear pattern showing that publishing on a busier or quieter day leads to higher views.
-7. **Countries differ:** France has the most unique videos (30,181) but the lowest median views (about 45,000), while Canada, US, and GB range from about 220,000 to 280,000.
+1. **Views and likes** have a fairly strong positive relationship (**0.71** correlation). More views usually means more likes.
+2. **Views and comments** have a weaker relationship (**0.53** correlation), while likes and comments are strongly linked (**0.82**). Views and dislikes have the weakest link (**0.41**).
+3. **Typical engagement:** The median trending video got about **2.75 likes** and **0.38 comments** per 100 views. The middle half got between about **0.9 and 6.1 likes** per 100 views.
+4. **Views are uneven:** On its first trending day, the median video had about **124,500** views (`124,496`), **2,700** likes (`2,727`), and **400** comments (`408`). About **91%** (`90.5%`) of videos had under 1 million views, while a few reached tens of millions (up to about 143 million).
+5. **Timing:** About **77%** (`49,047` of `63,801`) first trended 1 day after publishing, and another `3,121` trended the same day. Median views doubled from around 100,000 to around 200,000 between March and June 2018.
+6. **Busy publish days:** Most days had 250–350 new trending videos (busiest day: January 29, 2018 with 457). There is no clear link between how many videos were published on a day and their median views.
+7. **Countries differ:** France has the most unique videos (**30,181**) but the lowest median views (about **45,000**), while Canada (**24,103**, ~221,000), the US (**6,281**, ~271,000), and GB (**3,236**, ~279,000) have higher medians.
 
 ## Recommendations
 
-- Compare engagement using **likes per 100 views** rather than raw likes (about 1 to 6 likes per 100 views is typical for trending videos in this dataset).
-- Check likes and comments in the **first day or two** after publishing, since most videos trended the next day.
-- Report **medians instead of averages**, because a few huge videos pull the average up.
-- Look at **each country separately**, because France has many more videos with lower views.
-- Do not recommend a "best day" to publish based on this dataset, as no clear link was found between daily publishing volume and views.
-- Remember these are observed relationships, not proof that likes, comments, or dates cause higher views.
+1. **Compare engagement using likes per 100 views,** not raw likes. About 1 to 6 likes per 100 views is normal for trending videos in this data.
+2. **Check likes and comments in the first day or two** after publishing, because most videos reached the trending list the next day.
+3. **Use medians, not averages,** when describing views, because a few huge videos pull the average up (`436,533` average vs `124,496` median).
+4. **Look at each country separately,** because France has many more videos with lower views.
+5. **Do not pick a "best day" to publish** from this data. No clear pattern was found between busy publish days and views.
+
+## Limitations
+
+- We removed **2,016 rows (1.25%)**: 1,799 with a `#NAME?` video ID and 219 exact duplicates.
+- We only kept the first trending day per video and country, so we do not see how views grew after that.
+- Trending data is missing for January 10 to 11 and April 8 to 13, 2018.
+- The data covers only four countries from November 2017 to June 2018, so it does not represent all YouTube videos.
+- All results are relationships. They do not show that likes, comments, or publish dates cause more views.
 
 ## Project Structure
 
@@ -84,6 +68,7 @@ Data quality notes:
 ga-eda-project/
 ├── README.md                          # Project documentation
 ├── youtube_trending_analysis.ipynb    # Main EDA notebook
+├── youtube_trending_eda.pptx          # Project presentation slides
 ├── charts/                            # Saved PNG charts for the presentation
 └── data/
     └── youtube.csv                    # YouTube trending dataset
@@ -105,7 +90,7 @@ ga-eda-project/
 
 ## Project Status
 
-The data cleaning, analysis, visualisations, findings, and recommendations in the notebook are complete.
+The data cleaning, analysis, visualisations, findings, recommendations, and presentation are complete.
 
 ### Remaining Tasks
 
@@ -113,5 +98,5 @@ The data cleaning, analysis, visualisations, findings, and recommendations in th
 
 ## To-Do
 
-- [ ] Create the PowerPoint presentation explaining the project, methodology, findings, visualisations, and recommendations.
+- [x] Create the PowerPoint presentation explaining the project, methodology, findings, visualisations, and recommendations.
 - [ ] Create the project cover page.
